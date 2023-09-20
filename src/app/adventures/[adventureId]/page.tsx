@@ -9,6 +9,7 @@ function AdventurePage(props: { params: { adventureId: string } }) {
   const handlePlayerAction = useAction(api.dialog.handlePlayerAction);
   const adventureId = props.params.adventureId as Id<"adventures">;
   const entries = useQuery(api.dialog.getAllEntries);
+  const lastEntry = entries && entries[entries.length - 1];
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -46,6 +47,17 @@ function AdventurePage(props: { params: { adventureId: string } }) {
               />
               <button type="submit">Submit</button>
             </form>
+          </div>
+          <div>
+            {lastEntry && lastEntry.imageUrl ? (
+              <img
+                src={lastEntry.imageUrl}
+                alt="current event"
+                className="h-[512px] w-full"
+              />
+            ) : (
+              <span>loading...</span>
+            )}
           </div>
         </div>
       </div>

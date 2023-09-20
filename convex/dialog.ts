@@ -52,10 +52,15 @@ export const insertEntry = mutation({
     adventureId: v.id("adventures"),
   },
   handler: async (ctx, { input, response, adventureId }) => {
-    await ctx.db.insert("entries", {
+    const entryId = await ctx.db.insert("entries", {
       input,
       response,
       adventureId,
+    });
+
+    await ctx.scheduler.runAfter(0, internal.images.visualizeScene, {
+      adventureId,
+      entryId,
     });
   },
 });

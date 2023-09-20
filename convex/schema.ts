@@ -6,6 +6,7 @@ export default defineSchema({
     input: v.string(),
     response: v.string(),
     adventureId: v.id("adventures"),
+    imageUrl: v.optional(v.string()),
   }),
   adventures: defineTable({
     characterClass: v.string(),

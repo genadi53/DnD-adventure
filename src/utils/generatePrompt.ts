@@ -27,3 +27,11 @@ export const generateAdventureText = (characterClass: string) => {
   PLEASE MAKE SURE TO NEVER ROLL FOR THE PLAYER.  YOU SHOULD ALWAYS ASK THE PLAYER FOR HIS NEXT STEPS.
     `;
 };
+
+export const generateSceneDescription = (previousEvents: string) => {
+  return `Summarize the following adventure of a text based rpg.  Please give a one sentence of a visualize description for an artist who can use the description to paint us a picture.  
+          
+  here is the history of the adventure with the most recent events being at the end: 
+  
+  "${previousEvents}"`;
+};

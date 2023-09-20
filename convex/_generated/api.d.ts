@@ -16,6 +16,7 @@ import type {
 } from "convex/server";
 import type * as adventures from "../adventures";
 import type * as dialog from "../dialog";
+import type * as images from "../images";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -28,6 +29,7 @@ import type * as dialog from "../dialog";
 declare const fullApi: ApiFromModules<{
   adventures: typeof adventures;
   dialog: typeof dialog;
+  images: typeof images;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
