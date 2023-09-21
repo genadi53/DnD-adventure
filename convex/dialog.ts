@@ -8,6 +8,7 @@ import {
 } from "./_generated/server";
 import { api, internal } from "./_generated/api";
 import OpenAI from "openai";
+import { CONSTANTS } from "../src/utils/constants";
 
 const openai = new OpenAI({
   // apiKey: "my api key",
@@ -56,9 +57,16 @@ export const insertEntry = mutation({
       input,
       response,
       adventureId,
+      health: CONSTANTS.DEFAULT_HP,
+      inventory: [],
     });
 
     await ctx.scheduler.runAfter(0, internal.images.visualizeScene, {
+      adventureId,
+      entryId,
+    });
+
+    await ctx.scheduler.runAfter(0, internal.inventory.summarizeInventory, {
       adventureId,
       entryId,
     });
@@ -85,5 +93,34 @@ export const getEntriesForAdventure = internalQuery({
       .filter((q) => q.eq(q.field("adventureId"), args.adventureId))
       .collect();
     return entries;
+  },
+});
+
+export const combineAllPreviousEntries = internalAction({
+  args: {
+    adventureId: v.id("adventures"),
+  },
+  handler: async (ctx, args) => {
+    const adventure = await ctx.runQuery(internal.adventures.findAdventure, {
+      adventureId: args.adventureId,
+    });
+
+    if (!adventure) {
+      throw new Error("Adventure not found");
+    }
+
+    const entries = await ctx.runQuery(internal.dialog.getEntriesForAdventure, {
+      adventureId: args.adventureId,
+    });
+    // console.log(entries);
+
+    const previousEntries: string = entries
+      .map((entry) => {
+        return `${entry.input}\n\n${entry.response}`;
+      })
+      .join("\n\n");
+    // console.log(previousEntries);
+
+    return previousEntries;
   },
 });

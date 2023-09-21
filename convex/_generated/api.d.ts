@@ -17,6 +17,7 @@ import type {
 import type * as adventures from "../adventures";
 import type * as dialog from "../dialog";
 import type * as images from "../images";
+import type * as inventory from "../inventory";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   adventures: typeof adventures;
   dialog: typeof dialog;
   images: typeof images;
+  inventory: typeof inventory;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

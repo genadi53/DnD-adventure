@@ -7,8 +7,14 @@ export default defineSchema({
     response: v.string(),
     adventureId: v.id("adventures"),
     imageUrl: v.optional(v.string()),
+    health: v.number(),
+    inventory: v.array(v.string()),
   }),
   adventures: defineTable({
     characterClass: v.string(),
+  }),
+  items: defineTable({
+    itemName: v.string(),
+    imageUrl: v.optional(v.string()),
   }),
 });

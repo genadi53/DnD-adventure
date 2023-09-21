@@ -35,3 +35,18 @@ export const generateSceneDescription = (previousEvents: string) => {
   
   "${previousEvents}"`;
 };
+
+export const generateInventory = (previousEvents: string) => {
+  return `Summarize the following adventure of a text based rpg and return a json string with the following format so that I can know what inventory items i have, and also what my health points are.  
+          
+  // typescript type
+  {
+    health: number,
+    inventory: string[]
+  }
+  here is the history of the adventure with the most recent events being at the end: 
+  
+  "${previousEvents}"
+  
+  please only give us JSON, no other output`;
+};

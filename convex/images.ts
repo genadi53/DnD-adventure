@@ -27,26 +27,10 @@ export const visualizeScene = internalAction({
     entryId: v.id("entries"),
   },
   handler: async (ctx, args) => {
-    const adventure = await ctx.runQuery(internal.adventures.findAdventure, {
-      adventureId: args.adventureId,
-    });
-
-    if (!adventure) {
-      throw new Error("Adventure not found");
-    }
-
-    const entries = await ctx.runQuery(internal.dialog.getEntriesForAdventure, {
-      adventureId: args.adventureId,
-    });
-    // console.log(entries);
-
-    const previousEntries = entries
-      .map((entry) => {
-        return `${entry.input}\n\n${entry.response}`;
-      })
-      .join("\n\n");
-    // console.log(previousEntries);
-
+    const previousEntries = await ctx.runAction(
+      internal.dialog.combineAllPreviousEntries,
+      { adventureId: args.adventureId }
+    );
     const content = generateSceneDescription(previousEntries);
     console.log(content);
 
@@ -65,7 +49,7 @@ export const visualizeScene = internalAction({
         body: JSON.stringify({
           prompt,
           n: 1,
-          size: "512x512",
+          size: "256x256",
           //   response_format: "b64_json"
         }),
         headers: {
@@ -99,5 +83,35 @@ export const addVisualization = internalMutation({
     await ctx.db.patch(entryId, {
       imageUrl: imageUrl,
     });
+  },
+});
+
+export const generateImage = internalAction({
+  args: {
+    prompt: v.string(),
+  },
+  handler: async (_, args) => {
+    const imageFetchResponse = await fetch(
+      `https://api.openai.com/v1/images/generations`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          prompt: args.prompt,
+          n: 1,
+          size: "256x256",
+          //   response_format: "b64_json"
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        },
+      }
+    );
+
+    const imageResponce: ImageResponce = await imageFetchResponse.json();
+    // console.log(imageFetchResponse);
+    const imageUrl = imageResponce?.data?.[0]?.url;
+    console.log(imageUrl);
+    return imageUrl;
   },
 });
