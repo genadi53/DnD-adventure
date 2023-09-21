@@ -13,11 +13,8 @@ import {
   generateSceneDescription,
 } from "../src/utils/generatePrompt";
 import OpenAI from "openai";
-
-type ImageResponce = {
-  created: number;
-  data: { url: string }[] | undefined;
-} | null;
+import { ImagesResponse } from "openai/resources";
+import { CONSTANTS } from "../src/utils/constants";
 
 const openai = new OpenAI();
 
@@ -42,28 +39,9 @@ export const visualizeScene = internalAction({
     const prompt = completion.choices[0].message.content ?? "";
     console.log("prompt", prompt);
 
-    const imageFetchResponse = await fetch(
-      `https://api.openai.com/v1/images/generations`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          prompt,
-          n: 1,
-          size: "256x256",
-          //   response_format: "b64_json"
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        },
-      }
-    );
-
-    const imageResponce: ImageResponce = await imageFetchResponse.json();
-    // console.log(imageFetchResponse);
-
-    const imageUrl = imageResponce?.data?.[0]?.url;
-    console.log(imageUrl);
+    const imageUrl = await ctx.runAction(internal.images.generateImage, {
+      prompt,
+    });
 
     if (imageUrl) {
       await ctx.runMutation(internal.images.addVisualization, {
@@ -90,7 +68,7 @@ export const generateImage = internalAction({
   args: {
     prompt: v.string(),
   },
-  handler: async (_, args) => {
+  handler: async (ctx, args) => {
     const imageFetchResponse = await fetch(
       `https://api.openai.com/v1/images/generations`,
       {
@@ -108,10 +86,52 @@ export const generateImage = internalAction({
       }
     );
 
-    const imageResponce: ImageResponce = await imageFetchResponse.json();
+    const imageResponce: ImagesResponse = await imageFetchResponse.json();
     // console.log(imageFetchResponse);
     const imageUrl = imageResponce?.data?.[0]?.url;
     console.log(imageUrl);
+
+    if (imageUrl) {
+      // Download the image
+      const response = await fetch(imageUrl);
+      const image = await response.blob();
+
+      // Store the image in Convex
+      const storageId = await ctx.storage.store(image);
+      return (
+        (await ctx.storage.getUrl(storageId)) ??
+        CONSTANTS.DEFAULT_ITEM_IMAGE_URL
+      );
+    }
+    return imageUrl;
+  },
+});
+
+export const generateImageSecond = internalAction({
+  args: {
+    prompt: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const opanaiResponse = await openai.images.generate({
+      prompt: args.prompt,
+      size: "256x256",
+    });
+    const imageUrl = opanaiResponse.data[0]["url"]!;
+
+    // Download the image
+    const response = await fetch(imageUrl);
+    const image = await response.blob();
+
+    // Store the image in Convex
+    const storageId = await ctx.storage.store(image);
+
+    await ctx.runMutation(internal.inventory.storeItemImage, {
+      imageUrl:
+        (await ctx.storage.getUrl(storageId)) ??
+        CONSTANTS.DEFAULT_ITEM_IMAGE_URL,
+      itemName: args.prompt,
+    });
+
     return imageUrl;
   },
 });
