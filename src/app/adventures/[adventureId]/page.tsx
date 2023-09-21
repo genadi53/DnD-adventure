@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useAction, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import Dice from "react-dice-roll";
 
 function AdventurePage(props: { params: { adventureId: string } }) {
   const [message, setMessage] = useState<string>("");
@@ -41,6 +42,11 @@ function AdventurePage(props: { params: { adventureId: string } }) {
                 setMessage("");
               }}
             >
+              <Dice
+                size={40}
+                onRoll={(value) => setMessage(value.toString())}
+              />
+
               <input
                 className="p-1 rounded text-black"
                 name="message"
