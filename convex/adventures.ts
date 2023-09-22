@@ -1,14 +1,9 @@
 import { v } from "convex/values";
-import {
-  action,
-  internalAction,
-  internalQuery,
-  mutation,
-  query,
-} from "./_generated/server";
-import { api, internal } from "./_generated/api";
 import OpenAI from "openai";
 import { generateAdventureText } from "../src/utils/generatePrompt";
+import { CharacterType } from "../src/utils/types";
+import { api, internal } from "./_generated/api";
+import { internalAction, internalQuery, mutation } from "./_generated/server";
 
 const openai = new OpenAI({
   // apiKey: "my api key",

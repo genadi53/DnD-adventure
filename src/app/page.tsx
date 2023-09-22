@@ -5,9 +5,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { cn } from "../utils/cn";
-import ThemeButton from "../components/ThemeButton";
+import { CharacterType } from "../utils/types";
 
-type CharacterType = "wizard" | "warrior" | "archer";
 export default function Home() {
   const createAdventure = useMutation(api.adventures.createAdventure);
   const router = useRouter();

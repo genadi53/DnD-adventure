@@ -12,13 +12,15 @@ function AdventurePage(props: { params: { adventureId: string } }) {
   const [message, setMessage] = useState<string>("");
   const handlePlayerAction = useAction(api.dialog.handlePlayerAction);
   const adventureId = props.params.adventureId as Id<"adventures">;
-  const entries = useQuery(api.dialog.getAllEntries);
+  const entries = useQuery(api.dialog.getAllEntries, {
+    adventureId,
+  });
   const items = useQuery(api.inventory.getAllItems);
 
   const lastEntry = entries && entries[entries.length - 1];
 
   return (
-    <main className="flex flex-col items-center justify-between p-20">
+    <main className="flex flex-col items-center justify-between p-4 md:p-20">
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <section className="flex flex-col gap-4" id="left-side">
@@ -48,35 +50,38 @@ function AdventurePage(props: { params: { adventureId: string } }) {
                 );
               })}
             </div>
-            <form
-              className="flex gap-2"
-              onSubmit={(e) => {
-                e.preventDefault();
-                handlePlayerAction({
-                  message,
-                  adventureId,
-                });
-                setMessage("");
-              }}
-            >
+
+            <div className="flex gap-2">
               <Dice
                 size={40}
                 onRoll={(value) => setMessage(value.toString())}
               />
 
-              <input
-                className="p-1 px-2 rounded text-black dark:text-white flex-grow text-xl"
-                name="message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-              />
-              <button
-                type="submit"
-                className="rounded-lg bg-slate-400 px-2 py-1 dark:bg-slate-200 text-lg hover:dark:bg-slate-400 hover:bg-slate-300 font-semibold"
+              <form
+                className="flex gap-2"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handlePlayerAction({
+                    message,
+                    adventureId,
+                  });
+                  setMessage("");
+                }}
               >
-                Submit
-              </button>
-            </form>
+                <input
+                  className="p-1 px-2 rounded text-black dark:text-white flex-grow text-xl"
+                  name="message"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  className="rounded-lg bg-slate-400 px-2 py-1 dark:bg-slate-200 text-lg hover:dark:bg-slate-400 hover:bg-slate-300 font-semibold"
+                >
+                  Submit
+                </button>
+              </form>
+            </div>
           </section>
 
           <section

@@ -1,20 +1,14 @@
 import { v } from "convex/values";
+import OpenAI from "openai";
+import { CONSTANTS } from "../src/utils/constants";
+import { generateInventory } from "../src/utils/generatePrompt";
+import { internal } from "./_generated/api";
 import {
-  action,
   internalAction,
   internalMutation,
   internalQuery,
-  mutation,
   query,
 } from "./_generated/server";
-import { api, internal } from "./_generated/api";
-import {
-  generateAdventureText,
-  generateInventory,
-  generateSceneDescription,
-} from "../src/utils/generatePrompt";
-import OpenAI from "openai";
-import { CONSTANTS } from "../src/utils/constants";
 
 type StatsResponce =
   | {

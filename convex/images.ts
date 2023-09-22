@@ -1,20 +1,10 @@
 import { v } from "convex/values";
-import {
-  action,
-  internalAction,
-  internalMutation,
-  internalQuery,
-  mutation,
-  query,
-} from "./_generated/server";
-import { api, internal } from "./_generated/api";
-import {
-  generateAdventureText,
-  generateSceneDescription,
-} from "../src/utils/generatePrompt";
 import OpenAI from "openai";
 import { ImagesResponse } from "openai/resources";
 import { CONSTANTS } from "../src/utils/constants";
+import { generateSceneDescription } from "../src/utils/generatePrompt";
+import { internal } from "./_generated/api";
+import { internalAction, internalMutation } from "./_generated/server";
 
 const openai = new OpenAI();
 
@@ -40,7 +30,7 @@ export const visualizeScene = internalAction({
     console.log("prompt", prompt);
 
     const imageUrl = await ctx.runAction(internal.images.generateImage, {
-      prompt,
+      prompt: prompt + " illustration, dark, fantasy",
     });
 
     if (imageUrl) {

@@ -12,3 +12,5 @@ export type CustomMadeImageResponce = {
   created: number;
   data: { url: string }[] | undefined;
 } | null;
+
+export type CharacterType = "wizard" | "warrior" | "archer" | string;

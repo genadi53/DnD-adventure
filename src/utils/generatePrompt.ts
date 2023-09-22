@@ -1,4 +1,33 @@
-export const generateAdventureText = (characterClass: string) => {
+import { CharacterType } from "./types";
+
+const generateItems = (characterClass: CharacterType) => {
+  if (characterClass === "warrior")
+    return `
+    - a broad sword that deals a base damage of 1
+    - a bronze helmet
+    - an a health potion which heals for 5 hp
+    `;
+  if (characterClass === "archer")
+    return `
+    - a bow and arrows that deals a base damage from 1 to 2
+    - a medieval archer cloak
+    - a wooden oak shield
+    `;
+  if (characterClass === "wizard")
+    return `
+    - a wizzard crystal staff that deals a base damage from 2 to 3
+    - a wizard's magic robe
+    - a book of knowledge from where you study spells 
+    `;
+
+  return `
+    - a broad sword that deals a base damage of 1
+    - a bronze helmet
+    - an a health potion which heals for 5 hp
+    `;
+};
+
+export const generateAdventureText = (characterClass: CharacterType) => {
   return `
   You are a dungeon master who is going to run a text based adventure RPG for me.
   You will need to setup an adventure for me which will involve having
@@ -11,9 +40,7 @@ export const generateAdventureText = (characterClass: string) => {
 
   During this entire time, please track my health points which will start at 10, 
   my character class which is a ${characterClass}, and my inventory which will start with 
-  - a broad sword that deals a base damage of 1
-  - a bronze helmet
-  - an a health potion which heals for 3 hp
+  ${generateItems(characterClass)}
 
   the adventure should have some of the following
   - the hero must clear out a dungeon from undead enemies
@@ -29,21 +56,22 @@ export const generateAdventureText = (characterClass: string) => {
 };
 
 export const generateSceneDescription = (previousEvents: string) => {
-  return `Summarize the following adventure of a text based rpg.  Please give a one sentence of a visualize description for an artist who can use the description to paint us a picture.  
+  return `${previousEvents} 
           
-  here is the history of the adventure with the most recent events being at the end: 
+  Using the above adventure history, please describe the current scene so that I can use the description to draw a picture.
   
-  "${previousEvents}"`;
+  Please summerize using a single descriptive sentence.`;
 };
 
 export const generateInventory = (previousEvents: string) => {
   return `Summarize the following adventure of a text based rpg and return a json string with the following format so that I can know what inventory items i have, and also what my health points are.  
-          
-  // typescript type
+
+  // typescript type          
   {
     health: number,
     inventory: string[]
   }
+
   here is the history of the adventure with the most recent events being at the end: 
   
   "${previousEvents}"

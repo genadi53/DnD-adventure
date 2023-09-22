@@ -10,10 +10,7 @@ import { api, internal } from "./_generated/api";
 import OpenAI from "openai";
 import { CONSTANTS } from "../src/utils/constants";
 
-const openai = new OpenAI({
-  // apiKey: "my api key",
-  // defaults to process.env["OPENAI_API_KEY"]
-});
+const openai = new OpenAI();
 
 export const handlePlayerAction = action({
   args: {
@@ -74,10 +71,13 @@ export const insertEntry = mutation({
 });
 
 export const getAllEntries = query({
-  handler: async (ctx) => {
+  args: {
+    adventureId: v.id("adventures"),
+  },
+  handler: async (ctx, args) => {
     const entries = await ctx.db
       .query("entries")
-      // .filter((q) => q.gte)
+      .filter((q) => q.eq(q.field("adventureId"), args.adventureId))
       .collect();
     return entries;
   },
