@@ -1,7 +1,9 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import ConvexClientProvider from "./ConvexClientProvider";
+import Providers from "../components/Providers";
+import ThemeButton from "../components/ThemeButton";
+import { cn } from "../utils/cn";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,8 +19,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <ConvexClientProvider>{children}</ConvexClientProvider>
+      <body
+        className={cn(inter.className, "h-screen bg-white dark:bg-[#121212]")}
+      >
+        <Providers>
+          <header className="py-6">
+            <nav className="flex w-full items-center justify-end">
+              <ThemeButton styles="mx-4" />
+            </nav>
+          </header>
+          {children}
+        </Providers>
       </body>
     </html>
   );
